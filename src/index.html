@@ -5,63 +5,190 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradingView Webhook 使用說明與交易策略</title>
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f8f9fa;
+            --text-color: #333;
+            --code-background: #e9ecef;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: var(--text-color);
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: var(--background-color);
         }
+
         .page-container {
-            width: 100%;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 30px;
         }
+
         .section {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 20px;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            text-align: center;
             margin-bottom: 30px;
         }
-        h1 {
-            color: #2c3e50;
-        }
+
         h2 {
-            color: #3498db;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 30px;
         }
-        .url-container, .code-block {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 4px;
-            padding: 10px;
-            margin: 10px 0;
-            overflow-x: auto;
+
+        h3 {
+            color: var(--secondary-color);
+            margin-top: 25px;
         }
-        .url-text {
-            word-break: break-all;
+
+        /* Common styles for all blocks */
+        .url-container, .code-block, .note, .info {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin: 25px 0;
         }
-        .code-label {
-            font-weight: bold;
-            margin-bottom: 5px;
+
+        .url-container:hover, .code-block:hover, .note:hover, .info:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
         }
+
+        /* Specific styles for each block type */
+        .url-container {
+            background-color: var(--code-background);
+            padding: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .code-block {
+            background-color: var(--code-background);
+            padding: 20px;
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin: 25px 0;
+            overflow-x: auto; /* Allows horizontal scrolling if needed */
+        }
+
+        .code-block:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap; /* Allows text to wrap */
+            word-wrap: break-word; /* Breaks long words to prevent overflow */
+        }
+
+        .code-block code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            line-height: 1.5; /* Improves readability of wrapped text */
+        }
+
+        .note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+        }
+
+        .info {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 20px;
+        }
+
+        /* Styles for titles within blocks */
+        .code-label, .note-title, .info-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+        }
+
+        .code-label::before, .note-title::before, .info-title::before {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .code-label::before {
+            content: "\1F4BB"; /* Computer emoji */
+        }
+
+        .note-title::before {
+            content: "\26A0"; /* Warning sign emoji */
+        }
+
+        .info-title::before {
+            content: "\1F4A1"; /* Light bulb emoji */
+        }
+
         @media (max-width: 600px) {
+            .url-container, .code-block, .note, .info {
+                padding: 15px;
+            }
+
             body {
                 padding: 10px;
             }
+
+            .page-container {
+                padding: 20px;
+            }
+
             h1 {
                 font-size: 24px;
             }
+
             h2 {
                 font-size: 20px;
             }
+
+            .url-container {
+                padding: 10px;
+            }
+
+            .url-text {
+                font-size: 12px;
+            }
+
             .code-block {
-                font-size: 14px;
+                padding: 15px;
+            }
+
+            .code-block code {
+                font-size: 12px;
             }
         }
     </style>
 </head>
 <body>
 <div class="page-container">
-    <h1 id="tradingview-webhook-使用說明與交易策略" class="text-4xl font-bold mb-8 text-center">TradingView Webhook 使用說明與交易策略</h1>
+    <h1 id="tradingview-webhook-使用說明與交易策略">TradingView Webhook 使用說明與交易策略</h1>
 
     <div class="section">
-        <h2 id="基本設置" class="text-2xl font-semibold text-blue-500">基本設置</h2>
+        <h2 id="基本設置">基本設置</h2>
 
         <p>要使用 TradingView Webhook，請按照以下步驟進行設置：</p>
 
@@ -77,27 +204,36 @@
         <p>在 "訊息" 欄位中，您需要提供一個 JSON 格式的 payload，格式如下：</p>
 
         <div class="code-block">
-            <div class="code-label">Code</div>
+            <div class="code-label">Webhook Payload 格式</div>
             <pre><code>{
     "token": "您的 LINE API Token",
     "message": "您想發送的訊息"
 }</code></pre>
         </div>
 
-        <p>你可以到 <a href="https://notify-bot.line.me/zh_TW/" target="_blank">https://notify-bot.line.me/zh_TW/</a> 申請 Line API Token</p>
+        <div class="note">
+            <div class="note-title">注意</div>
+            <p>請確保您的 LINE API Token 正確無誤，並妥善保管。不要將其分享給他人或公開發布。</p>
+        </div>
 
+        <div class="info">
+            <div class="info-title">Line API Token 申請</div>
+            <p>你可以到 <a href="https://notify-bot.line.me/zh_TW/" target="_blank">Line Notify 官方網站</a> 申請 Line
+                API Token</p>
+        </div>
 
     </div>
 
     <div class="section">
-        <h2 id="常用關鍵字" class="text-2xl font-semibold text-blue-500">常用關鍵字</h2>
+        <h2 id="常用關鍵字">常用關鍵字</h2>
 
         <p>TradingView 提供了多個可以在警報訊息中使用的關鍵字，以下是一些常用的例子：</p>
 
         <ul>
             <li><strong>{{ticker}}</strong> - 快訊中使用的品種代碼（如 AAPL、BTCUSD 等）</li>
-            <li><strong>{{close}}, {{open}}, {{high}}, {{low}}, {{time}}, {{volume}}</strong> - 觸發快訊的 K 棒的相應值</li>
-            <li><strong>{{timenow}}</strong> - 快訊的當前觸發時間</li>
+            <li><strong>{{close}}, {{open}}, {{high}}, {{low}}</strong> - 觸發快訊的 K 棒的相應價格</li>
+            <li><strong>{{time}}, {{timenow}}</strong> - K 棒時間和快訊觸發時間</li>
+            <li><strong>{{volume}}</strong> - 交易量</li>
             <li><strong>{{strategy.position_size}}</strong> - 當前倉位大小</li>
             <li><strong>{{strategy.order.action}}</strong> - 返回 "buy" 或 "sell"</li>
             <li><strong>{{strategy.market_position}}</strong> - 返回當前市場位置："long"、"flat" 或 "short"</li>
@@ -105,57 +241,61 @@
             <li><strong>{{strategy.order.price}}</strong> - 返回執行訂單的價格</li>
         </ul>
 
-        <p>你可以從 <a href="https://tw.tradingview.com/support/solutions/43000531021/" target="_blank">https://tw.tradingview.com/support/solutions/43000531021/</a> 獲得更多訊息</p>
+        <div class="info">
+            <div class="info-title">TradingView 內建變數</div>
+            <p>你可以從 <a href="https://tw.tradingview.com/support/solutions/43000531021/" target="_blank">TradingView</a> 獲得更多訊息</p>
+        </div>
 
     </div>
 
     <div class="section">
-        <h2 id="交易策略與-webhook" class="text-2xl font-semibold text-blue-500">交易策略與 Webhook</h2>
+        <h2 id="交易策略與-webhook">交易策略與 Webhook</h2>
 
-        <p>TradingView 的 Webhook 功能可以與各種交易策略結合使用，以實現自動化交易和實時通知。以下是一些常見的策略應用：</p>
+        <p>TradingView 的 Webhook
+            功能可以與各種交易策略結合使用，以實現自動化交易和實時通知。以下是一些常見的策略應用：</p>
 
-        <h3 id="突破策略" class="text-xl font-semibold mt-6 mb-3 text-blue-400">1. 突破策略</h3>
+        <h3 id="突破策略">1. 突破策略</h3>
 
         <p>當價格突破重要支撐或阻力位時發送警報。例如：</p>
 
         <div class="code-block">
-            <div class="code-label">Code</div>
+            <div class="code-label">突破策略 Webhook Payload</div>
             <pre><code>{
     "token": "YOUR_LINE_API_TOKEN",
     "message": "{{ticker}} 價格突破！當前價格：{{close}}，突破方向：{{strategy.order.action}}"
 }</code></pre>
         </div>
 
-        <h3 id="均線交叉策略" class="text-xl font-semibold mt-6 mb-3 text-blue-400">2. 均線交叉策略</h3>
+        <h3 id="均線交叉策略">2. 均線交叉策略</h3>
 
         <p>當短期均線與長期均線交叉時發送警報。例如：</p>
 
         <div class="code-block">
-            <div class="code-label">Code</div>
+            <div class="code-label">均線交叉策略 Webhook Payload</div>
             <pre><code>{
     "token": "YOUR_LINE_API_TOKEN",
     "message": "{{ticker}} 均線交叉！交叉類型：{{strategy.order.action}}，當前價格：{{close}}"
 }</code></pre>
         </div>
 
-        <h3 id="rsi-超買超賣策略" class="text-xl font-semibold mt-6 mb-3 text-blue-400">3. RSI 超買超賣策略</h3>
+        <h3 id="rsi-超買超賣策略">3. RSI 超買超賣策略</h3>
 
         <p>當 RSI 指標進入超買或超賣區域時發送警報。例如：</p>
 
         <div class="code-block">
-            <div class="code-label">Code</div>
+            <div class="code-label">RSI 策略 Webhook Payload</div>
             <pre><code>{
     "token": "YOUR_LINE_API_TOKEN",
-    "message": "{{ticker}} RSI 警報！當前 RSI 值：{{plot_0}}，建議操作：{{strategy.order.action}}"
+    "message": "{{ticker}} RSI 警報！當前 RSI 值：{{plot(\"RSI\")}}，建議操作：{{strategy.order.action}}"
 }</code></pre>
         </div>
 
-        <h3 id="止盈止損策略" class="text-xl font-semibold mt-6 mb-3 text-blue-400">4. 止盈止損策略</h3>
+        <h3 id="止盈止損策略">4. 止盈止損策略</h3>
 
         <p>當達到預設的止盈或止損點位時發送警報。例如：</p>
 
         <div class="code-block">
-            <div class="code-label">Code</div>
+            <div class="code-label">止盈止損策略 Webhook Payload</div>
             <pre><code>{
     "token": "YOUR_LINE_API_TOKEN",
     "message": "{{ticker}} 達到{{strategy.order.comment}}！執行價格：{{strategy.order.price}}，倉位變化：{{strategy.order.contracts}}"
@@ -164,7 +304,7 @@
     </div>
 
     <div class="section">
-        <h2 id="策略優化與回測" class="text-2xl font-semibold text-blue-500">策略優化與回測</h2>
+        <h2 id="策略優化與回測">策略優化與回測</h2>
 
         <p>使用 TradingView 的策略測試器可以優化您的交易策略：</p>
 
@@ -176,18 +316,23 @@
         </ul>
 
         <p>優化後的策略可以通過 Webhook 實現自動化交易，提高交易效率。</p>
+
+        <div class="note">
+            <div class="note-title">提示</div>
+            <p>在實盤交易之前，建議先在模擬帳戶中測試您的策略，以確保其在實際市場條件下的表現。</p>
+        </div>
     </div>
 
     <div class="section">
-        <h2 id="注意事項" class="text-2xl font-semibold text-blue-500">注意事項</h2>
+        <h2 id="注意事項">注意事項</h2>
 
         <ul>
-            <li>確保您的 LINE API Token 正確無誤</li>
-            <li>測試您的 Webhook 以確保它能正常運作</li>
-            <li>根據您的交易策略自定義訊息內容</li>
+            <li>定期檢查您的 Webhook 設置，確保它能正常運作</li>
+            <li>根據您的交易策略和風險承受能力自定義訊息內容</li>
             <li>定期評估和調整您的策略，以適應不同的市場環境</li>
             <li>注意風險管理，設置適當的倉位大小和止損點</li>
             <li>考慮使用模擬交易來測試新策略，然後再用於實盤交易</li>
+            <li>遵守所有適用的金融法規和交易規則</li>
         </ul>
     </div>
 </div>
