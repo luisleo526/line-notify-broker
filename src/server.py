@@ -3,10 +3,10 @@ import json
 import requests
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from starlette.requests import Request
 
-from src.schemas.basic import TextOnly, TradingViewPayload
+from src.schemas.basic import TradingViewPayload
 
 LINE_NOTIFY_URL = "https://notify-api.line.me/api/notify"
 app = FastAPI(
@@ -51,9 +51,10 @@ async def send_line_notify(
     return response.json()
 
 
-@app.get("/", response_model=TextOnly)
+@app.get("/")
 async def root():
-    return TextOnly(text="Hello World")
+    # HTMLResponse in index.html
+    return FileResponse("/run/src/index.html")
 
 
 @app.get("/elements", include_in_schema=False)
