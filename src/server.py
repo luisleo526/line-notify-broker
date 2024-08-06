@@ -1,18 +1,21 @@
+import json
+
+import requests
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from starlette.requests import Request
 
-from src.routers.auth import router as auth_router
-from src.schemas.basic import TextOnly
+from src.schemas.basic import TextOnly, TradingViewPayload
 
+LINE_NOTIFY_URL = "https://notify-api.line.me/api/notify"
 app = FastAPI(
-    title="Template FastAPI Backend Server",
-    description="Template Description",
+    title="A Line Notify API Broker",
+    description="Receive a request from a client and send a message to Line Notify",
     version="0.0.1",
     contact={
-        "name": "Author Name",
-        "email": "example@exmaple.com",
+        "name": "Hao-Liang Wen",
+        "email": "luisleo52655@gmail.com",
     }
 )
 
@@ -24,7 +27,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
+
+# app.include_router(auth_router, prefix="/auth", tags=["auth"])
+
+
+@app.post("/")
+async def send_line_notify(
+        payload: TradingViewPayload
+):
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer ' + payload.token
+    }
+
+    payload = 'message=' + json.dumps(payload.message, ensure_ascii=False, indent=2)
+
+    response = requests.post(
+        LINE_NOTIFY_URL,
+        headers=headers,
+        data=payload
+    )
+
+    return response.json()
 
 
 @app.get("/", response_model=TextOnly)
